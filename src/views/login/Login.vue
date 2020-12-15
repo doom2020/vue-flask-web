@@ -4,44 +4,53 @@
       <div class="form-row">
         <div class="col-md-12 mb-3">
           <label for="validationAccount">Account</label>
-          <input type="text" class="form-control" :class="state.accountClass" id="validationAccount" v-model.trim="state.account" required @blur="handlerAccount">
-          <div :class="state.accountMsgClass">{{ state.accountMsg }}</div>
+          <input type="text" class="form-control" ref="accountInput" :class="state.accountClass" id="validationAccount" v-model.trim="state.account" required @blur="handlerAccount">
+          <div :class="state.accountMsgClass" style="height: 20px;">{{ state.accountMsg }}</div>
         </div>
       </div>
       <div class="form-row">
         <div class="col-md-12 mb-3">
           <label for="validationPwd">Password</label>
           <input type="text" class="form-control" :class="state.passwordClass" id="validationPwd" v-model.trim="state.password" required @blur="handlerPassword">
-          <div :class="state.passwordMsgClass">{{ state.passwordMsg }}</div>
+          <div :class="state.passwordMsgClass" style="height: 20px;">{{ state.passwordMsg }}</div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="col-md-6 mb-3">
+      <div class="form-row" style="height: 80px;">
+        <div class="col-md-4 mb-3">
           <div class="form-group">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" v-model="state.remPwd" id="remPwd" required @change="handlerRember">
               <label class="form-check-label" for="remPwd">Remeber Password</label>
-              <div v-show="state.showRemMsg">下次登录可不用输入密码</div>
+              <div v-show="state.showRemMsg" class="fontStyle">下次登录可不用输入密码</div>
             </div>
           </div>
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <div class="form-group" style="float: right">
-            <a href="#" id="forgetPwd" @click="forgetPassword">Forget password?</a>
+            <a href="#" id="forgetPwd" @click="forgetPassword" @mouseover="toFindPassword" @mouseleave="cancleToFindPwd">Forget password?</a>
             <label class="form-check-label" for="forgetPwd">
             </label>
-            <div v-show="state.showForMsg">跳转至找回密码</div>
+            <div v-show="state.showForMsg" class="fontStyle">跳转至找回密码</div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group" style="float: right">
+            <a href="#" id="registerAccount" @click="registerAccount" @mouseover="toRegisterAccount" @mouseleave="cancleToRegister">Not account?</a>
+            <label class="form-check-label" for="registerAccount">
+            </label>
+            <div v-show="state.showRegMsg" class="fontStyle">去注册一个账户</div>
           </div>
         </div>
       </div>
-      <button id="btnLogin" type="button" class="btn btn-primary btn-lg btn-block" @click="toLogin">登录</button>
+      <button id="btnLogin" type="button" class="btn btn-success btn-lg btn-block" :disabled='state.loginDisabled' @click="toLogin">登录</button>
       <p id="errMsg" v-show="state.showErrMsg">密码或账号异常</p>
     </form>
   </div>
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 export default {
   name: 'Login',
   setup() {
@@ -57,10 +66,30 @@ export default {
       remPwd: false,
       showRemMsg: false,
       showForMsg: false,
-      showErrMsg: false
+      showErrMsg: false,
+      showRegMsg: false,
+      loginDisabled: false
     })
-    const forgetPwd = () => {}
-    const toLogin = () => {}
+    const listenEnter = onMounted(() => {
+      window.addEventListener('keyup', keyUp)
+    })
+    const router = useRouter()
+    const forgetPassword = () => {
+      router.push({
+        path: '/forget'
+      })
+    }
+    const registerAccount = () => {
+      router.push({
+        path: '/register'
+      })
+    }
+    const toLogin = () => {
+      state.loginDisabled = !state.loginDisabled
+      router.push({
+        path: '/'
+      })
+    }
     const handlerAccount = () => {
       if (!state.account) {
         state.accountClass = 'is-invalid'
@@ -90,8 +119,29 @@ export default {
         state.showRemMsg = false
       }
     }
+    const toFindPassword = () => {
+      state.showForMsg = true
+    }
+    const cancleToFindPwd = () => {
+      state.showForMsg = false
+    }
+    const toRegisterAccount = () => {
+      state.showRegMsg = true
+    }
+    const cancleToRegister = () => {
+      state.showRegMsg = false
+    }
+    const accountInput = ref(null)
+    const focusAccount = onMounted(() => {
+      accountInput.value.focus()
+    })
+    const keyUp = (event) => {
+      if (event.keyCode === 13) {
+        toLogin()
+      }
+    }
     return {
-      state, forgetPwd, toLogin, handlerAccount, handlerPassword, handlerRember
+      state, forgetPassword, toLogin, handlerAccount, handlerPassword, handlerRember, toFindPassword, cancleToFindPwd, accountInput, focusAccount, listenEnter, keyUp, registerAccount, toRegisterAccount, cancleToRegister
     }
   }
 }
@@ -116,5 +166,9 @@ export default {
     width: 500px;
     height: 450px;
     margin: 0px auto;
+  }
+  .fontStyle{
+    font-size: 10px;
+    color: #009933;
   }
 </style>

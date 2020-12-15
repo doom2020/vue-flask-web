@@ -22,6 +22,12 @@ const routes = [
     name: 'Register',
     meta: 'register',
     component: () => import('../views/register/Register.vue')
+  },
+  {
+    path: '/forget',
+    name: 'Forget',
+    meta: 'forget',
+    component: () => import('../views/forget/Forget.vue')
   }
 ]
 
