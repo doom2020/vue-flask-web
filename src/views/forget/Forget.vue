@@ -2,64 +2,71 @@
   <div id="forgetDiv">
     <ul class="nav nav-tabs" style="margin-left: 10px;padding-top: 10px;">
       <li class="nav-item">
-          <a class="nav-link active" href="#">找回密码</a>
-      </li>
-      <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-          <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <a class="dropdown-item" href="#">Something else here</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Separated link</a>
-          </div>
-      </li> -->
-      <li class="nav-item">
-          <a class="nav-link" href="#">重置密码</a>
+          <a class="nav-link" href="#" :style="state.findPwdStyle" @click="showFindPwdForm">找回密码</a>
       </li>
       <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          <a class="nav-link" href="#" :style="state.resetPwdStyle" @click="showResetPwdForm">重置密码</a>
       </li>
     </ul>
-    <form id="forgetForm">
+    <form id="findPwdForm" v-if="state.isFindPwd">
       <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">用户名</label>
+        <label for="accountForFind" class="col-sm-2 col-form-label">用户名</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="inputEmail3">
+          <input type="text" class="form-control is-valid" id="accountForFind" v-model="state.findForm.account">
         </div>
       </div>
       <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">邮箱</label>
+        <label for="phoneForFind" class="col-sm-2 col-form-label">手机</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="inputEmail3">
+          <input type="text" class="form-control is-valid" id="phoneForFind" v-model="state.findForm.phone">
         </div>
       </div>
       <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">手机</label>
+        <label for="codeForFind" class="col-sm-2 col-form-label">验证码</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="inputEmail3">
+          <input type="text" class="form-control is-valid" id="codeForFind" v-model="state.findForm.code">
         </div>
       </div>
-      <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">验证码</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="inputEmail3">
-        </div>
-      </div>
-      <!-- <div class="form-group row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-10">
-          <div class="form-check" style="float: right">
-            <input class="form-check-input" type="checkbox" id="gridCheck1">
-            <label class="form-check-label" for="gridCheck1">
-              同意此协议
-            </label>
-          </div>
-        </div>
-      </div> -->
       <div class="form-group row" style="margin-top: 50px;">
         <div class="col-sm-12">
-          <button type="button" class="btn btn-success btn-lg btn-block" @click="toRegister">获取验证码</button>
+          <button type="button" class="btn btn-success btn-lg btn-block" @click="toFindPassword">找回密码</button>
+        </div>
+      </div>
+    </form>
+    <form id="resetPwdForm" v-if="!state.isFindPwd">
+      <div class="form-group row">
+        <label for="accountForReset" class="col-sm-2 col-form-label">用户名</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control is-invalid" id="accountForReset" v-model="state.resetForm.account">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="phoneForReset" class="col-sm-2 col-form-label">手机</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control is-invalid" id="phoneForReset" v-model="state.resetForm.phone">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="pwdForReset" class="col-sm-2 col-form-label">密码</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control is-invalid" id="pwdForReset" v-model="state.resetForm.pwd">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="upwdForReset" class="col-sm-2 col-form-label">确认密码</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control is-invalid" id="upwdForReset" v-model="state.resetForm.upwd">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="codeForReset" class="col-sm-2 col-form-label">验证码</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control is-invalid" id="codeForReset" v-model="state.resetForm.code">
+        </div>
+      </div>
+      <div class="form-group row" style="margin-top: 50px;">
+        <div class="col-sm-12">
+          <button type="button" class="btn btn-success btn-lg btn-block" @click="toResetPassword">重置密码</button>
         </div>
       </div>
     </form>
@@ -67,8 +74,55 @@
 </template>
 
 <script>
+import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 export default {
-  name: 'Forget'
+  name: 'Forget',
+  setup() {
+    const router = useRouter()
+    const state = reactive({
+      resetPwdStyle: '',
+      findPwdStyle: 'border-bottom: 5px solid #003399;background-color: #F0FFFF',
+      isFindPwd: true,
+      findForm: {
+        account: '', phone: '', code: ''
+      },
+      resetForm: {
+        account: '', phone: '', code: '', pwd: '', upwd: ''
+      }
+    })
+    const showFindPwdForm = () => {
+      state.findPwdStyle = 'border-bottom: 5px solid #003399;background-color: #F0FFFF'
+      state.resetPwdStyle = ''
+      state.isFindPwd = true
+    }
+    const showResetPwdForm = () => {
+      state.resetPwdStyle = 'border-bottom: 5px solid #003399;background-color: #F0FFFF'
+      state.findPwdStyle = ''
+      state.isFindPwd = false
+    }
+    const toFindPassword = () => {
+      console.log(state.findForm)
+      alert('找回密码成功,密码已下发至短信,请注意查收')
+      setTimeout(() => {
+        router.push({
+          path: '/login'
+        })
+      }, 1000)
+    }
+    const toResetPassword = () => {
+      console.log(state.resetForm)
+      alert('密码重置成功!')
+      setTimeout(() => {
+        router.push({
+          path: '/login'
+        }, 1000)
+      })
+    }
+    return {
+      state, showResetPwdForm, showFindPwdForm, toFindPassword, toResetPassword
+    }
+  }
 }
 </script>
 <style>
@@ -79,11 +133,18 @@ export default {
     border: 2px;
     border-radius: 2px;
   }
-  #forgetForm{
-    padding-top: 5px;
+  #findPwdForm{
+    padding: 5px;
     width: 600px;
-    height: 400px;
+    height: 450px;
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 50px;
+  }
+  #resetPwdForm{
+    padding: 5px;
+    width: 600px;
+    height: 450px;
+    margin: 0 auto;
+    margin-top: 50px;
   }
 </style>
