@@ -73,16 +73,21 @@ function useRegisterAccount(router) {
 }
 
 // 3. 登录
-function useToLogin(router) {
-  const loginDisabled = ref(false)
-  const showErrMsg = ref(false)
+function useToLogin(router, account, loginDisabled, showErrMsg) {
   const toLogin = () => {
-    loginDisabled.value = !loginDisabled.value
-    router.push({
-      path: '/'
-    })
+    loginDisabled.value = true
+    if (!account.value) {
+      showErrMsg.value = true
+      loginDisabled.value = false
+    } else {
+      loginDisabled.value = false
+      sessionStorage.setItem('userInfo', account.value)
+      router.push({
+        path: '/'
+      })
+    }
   }
-  return { toLogin, loginDisabled, showErrMsg }
+  return toLogin
 }
 
 // 4. 用户input处理
@@ -204,9 +209,11 @@ export default {
     const router = useRouter()
     const forgetPassword = useForgetPassword(router)
     const registerAccount = useRegisterAccount(router)
-    const { toLogin, loginDisabled, showErrMsg } = useToLogin(router)
-    const { focusAccount, accountInput } = useFocusAccount()
+    const loginDisabled = ref(false)
+    const showErrMsg = ref(false)
     const { handlerAccount, account, accountClass, accountMsg, accountMsgClass } = useHandlerAccount()
+    const toLogin = useToLogin(router, account, loginDisabled, showErrMsg)
+    const { focusAccount, accountInput } = useFocusAccount()
     const { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass } = useHandlerPassword()
     const { handlerRember, remPwd, showRemMsg } = useHandlerRember()
     const showForMsg = ref(false)

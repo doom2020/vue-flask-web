@@ -24,7 +24,7 @@
         </form>
         <ul class="navbar-nav" style="float: right;">
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="toLogin">未登录</a>
+            <a class="nav-link" href="#" @click="toLogin">{{ userInfo }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click="toLogout">Logout</a>
@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import { reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 export default {
   name: 'Home',
@@ -73,6 +73,13 @@ export default {
         }
       ]
     })
+    const userInfo = ref('')
+    const getUserInfo = onMounted(() => {
+      userInfo.value = sessionStorage.getItem('userInfo')
+      if (!userInfo.value) {
+        userInfo.value = '未登录'
+      }
+    })
     const router = useRouter()
     const toLogout = () => {
       router.push({
@@ -85,7 +92,7 @@ export default {
       })
     }
     return {
-      state, toLogout, toLogin
+      state, toLogout, toLogin, userInfo, getUserInfo
     }
   }
 }
