@@ -4,25 +4,25 @@
       <div class="form-group row">
         <label for="account" class="col-sm-2 col-form-label">用户名</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control is-valid" id="account" v-model="state.registerForm.account">
+          <input type="text" :class="accountClass" id="account" v-model="account" @blur="handlerAccount">
         </div>
       </div>
       <div class="form-group row">
         <label for="phone" class="col-sm-2 col-form-label">手机</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control is-valid" id="phone" v-model="state.registerForm.phone">
+          <input type="text" :class="phoneClass" id="phone" v-model="phone" @blur="handlerPhone">
         </div>
       </div>
       <div class="form-group row">
         <label for="pwd" class="col-sm-2 col-form-label">密码</label>
         <div class="col-sm-10">
-          <input type="password" class="form-control is-invalid" id="pwd" v-model="state.registerForm.pwd">
+          <input type="password" :class="pwdClass" id="pwd" v-model="pwd" @blur="handlerPwd">
         </div>
       </div>
       <div class="form-group row">
         <label for="upwd" class="col-sm-2 col-form-label">确认密码</label>
         <div class="col-sm-10">
-          <input type="password" class="form-control is-invalid" id="upwd" v-model="state.registerForm.upwd">
+          <input type="password" :class="upwdClass" id="upwd" v-model="upwd" @blur="handlerUpwd">
         </div>
       </div>
       <fieldset class="form-group">
@@ -30,15 +30,15 @@
           <legend class="col-form-label col-sm-2 pt-0">性别</legend>
           <div class="col-sm-10">
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="girl" checked>
+              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="girl" v-model="isChecked">
               <label class="form-check-label" for="gridRadios1" style="margin-right: 80px;">
                 女
               </label>
-              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="boy">
+              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="boy" v-model="isChecked">
               <label class="form-check-label" for="gridRadios2" style="margin-right: 80px;">
                 男
               </label>
-              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="secret" disabled>
+              <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="secret" disabled v-model="isChecked">
               <label class="form-check-label" for="gridRadios3">
                 隐藏
               </label>
@@ -50,7 +50,7 @@
         <div class="col-sm-2"></div>
         <div class="col-sm-10">
           <div class="form-check" style="float: right">
-            <input class="form-check-input" type="checkbox" id="agree" :checked="state.registerForm.isAgree">
+            <input class="form-check-input" type="checkbox" id="agree" v-model="isAgree">
             <label class="form-check-label" for="agree">
               同意此协议
             </label>
@@ -62,32 +62,120 @@
           <button type="button" class="btn btn-success btn-lg btn-block" @click="toRegister" :disabled="registerDisabled">注册</button>
         </div>
       </div>
+      <div class="form-group row" style="margin-top: 40px;" v-show="showErrMsg">
+        <div class="col-sm-12">
+          <h4 style="text-align: center;color: #FF0033">注册失败</h4>
+        </div>
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-import { computed, reactive } from 'vue'
+import { computed, reactive, toRefs, ref } from 'vue'
 import { useRouter } from 'vue-router'
-export default {
-  name: 'Register',
-  setup() {
-    const router = useRouter()
-    const state = reactive({
-      registerForm: {
-        account: '', phone: '', pwd: '', upwd: '', isAgree: false, registerDisabled: true
-      }
-    })
-    const toRegister = () => {
+
+function useHandlerAccount() {
+  const account = ref('')
+  const accountClass = ref('form-control')
+  const handlerAccount = () => {
+    if (!account.value) {
+      accountClass.value = 'form-control is-invalid'
+    } else {
+      accountClass.value = 'form-control is-valid'
+    }
+  }
+  return { handlerAccount, account, accountClass }
+}
+
+function useHandlerPhone() {
+  const phone = ref('')
+  const phoneClass = ref('form-control')
+  const handlerPhone = () => {
+    if (!phone.value) {
+      phoneClass.value = 'form-control is-invalid'
+    } else {
+      phoneClass.value = 'form-control is-valid'
+    }
+  }
+  return { handlerPhone, phone, phoneClass }
+}
+
+function useHandlerPwd() {
+  const pwd = ''
+  const pwdClass = ref('form-control')
+  const handlerPwd = () => {
+    if (!pwd.value) {
+      pwdClass.value = 'form-control is-invalid'
+    } else {
+      pwdClass.value = 'form-control is-valid'
+    }
+  }
+  return { handlerPwd, pwd, pwdClass }
+}
+
+function useHandlerUpwd(pwd) {
+  const upwd = ''
+  const upwdClass = ref('form-control')
+  const handlerUpwd = () => {
+    if (!upwd.value || upwd.value !== pwd.value) {
+      upwdClass.value = 'form-control is-invalid'
+    } else {
+      upwdClass.value = 'form-control is-valid'
+    }
+  }
+  return { handlerUpwd, upwd, upwdClass }
+}
+
+function useRegisterDisabled() {
+  const isAgree = ref(false)
+  const registerDisabled = computed(() => {
+    return !isAgree.value
+  })
+  return { registerDisabled, isAgree }
+}
+
+function useToRegister(router, account, phone, pwd, upwd, isChecked) {
+  const showErrMsg = ref(false)
+  const toRegister = () => {
+    if (account.value && phone.value && pwd.value && upwd.value && isChecked) {
+      sessionStorage.setItem('userInfo', account.value)
       router.push({
         path: '/'
       })
+    } else {
+      showErrMsg.value = true
     }
-    const registerDisabled = computed(() => {
-      return state.registerForm.isAgree
+  }
+  return { toRegister, showErrMsg }
+}
+export default {
+  name: 'Register',
+  setup() {
+    const { handlerAccount, account, accountClass } = useHandlerAccount()
+    const { handlerPhone, phone, phoneClass } = useHandlerPhone()
+    const { handlerPwd, pwd, pwdClass } = useHandlerPwd()
+    const { handlerUpwd, upwd, upwdClass } = useHandlerUpwd(pwd)
+    const isChecked = ref('girl')
+    const router = useRouter()
+    const { toRegister, showErrMsg } = useToRegister(router, account, phone, pwd, upwd, isChecked)
+    const { registerDisabled, isAgree } = useRegisterDisabled()
+    const state = reactive({
+      account,
+      accountClass,
+      phone,
+      phoneClass,
+      pwd,
+      pwdClass,
+      upwd,
+      upwdClass,
+      isAgree,
+      registerDisabled,
+      isChecked,
+      showErrMsg
     })
     return {
-      state, toRegister, registerDisabled
+      ...toRefs(state), toRegister, registerDisabled, handlerAccount, handlerPhone, handlerPwd, handlerUpwd
     }
   }
 }
