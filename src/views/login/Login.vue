@@ -73,7 +73,9 @@ function useRegisterAccount(router) {
 }
 
 // 3. 登录
-function useToLogin(router, account, loginDisabled, showErrMsg) {
+function useToLogin(router, account) {
+  const loginDisabled = ref(false)
+  const showErrMsg = ref(false)
   const toLogin = () => {
     loginDisabled.value = true
     if (!account.value) {
@@ -87,7 +89,7 @@ function useToLogin(router, account, loginDisabled, showErrMsg) {
       })
     }
   }
-  return toLogin
+  return { toLogin, loginDisabled, showErrMsg }
 }
 
 // 4. 用户input处理
@@ -209,10 +211,8 @@ export default {
     const router = useRouter()
     const forgetPassword = useForgetPassword(router)
     const registerAccount = useRegisterAccount(router)
-    const loginDisabled = ref(false)
-    const showErrMsg = ref(false)
     const { handlerAccount, account, accountClass, accountMsg, accountMsgClass } = useHandlerAccount()
-    const toLogin = useToLogin(router, account, loginDisabled, showErrMsg)
+    const { toLogin, loginDisabled, showErrMsg } = useToLogin(router, account)
     const { focusAccount, accountInput } = useFocusAccount()
     const { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass } = useHandlerPassword()
     const { handlerRember, remPwd, showRemMsg } = useHandlerRember()
@@ -220,8 +220,8 @@ export default {
     const toFindPassword = useToFindPassword(showForMsg)
     const cancleToFindPwd = useCancleToFindPwd(showForMsg)
     const showRegMsg = ref(false)
-    const toRegisterAccount = useToRegisterAccount(showRemMsg)
-    const cancleToRegister = useCancleToRegister(showRemMsg)
+    const toRegisterAccount = useToRegisterAccount(showRegMsg)
+    const cancleToRegister = useCancleToRegister(showRegMsg)
     const keyUp = useKeyUp(toLogin)
     const listenEnter = useListenEnter(keyUp)
     const state = reactive({ account, accountClass, accountMsg, accountMsgClass, password, passwordClass, passwordMsg, passwordMsgClass, remPwd, showRemMsg, showForMsg, showRegMsg, showErrMsg, loginDisabled })

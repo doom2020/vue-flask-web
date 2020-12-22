@@ -24,7 +24,8 @@
         </form>
         <ul class="navbar-nav" style="float: right;">
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="toLogin">{{ userInfo }}</a>
+            <span v-if="showUser" class="nav-link" style="color: #0000FF">{{ userInfo }}</span>
+            <a v-else class="nav-link" href="#" @click="toLogin" style="color: #FF0033">{{ userInfo }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click="toLogout">Logout</a>
@@ -34,7 +35,7 @@
     </nav>
     <div style="width: 180px;flex:;position: fixed;top: 0;margin-top: 58px;overflow: auto;">
       <ul style="margin-bottom: 0;padding-left: 0;background-color: dimgrey;">
-        <li v-for="(item, index) in state.firstMenuList" :key="index" class="firstMenu">
+        <li v-for="(item, index) in firstMenuList" :key="index" class="firstMenu">
           <a>
             <span>
               <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" :class="item.classIconLeft" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -57,11 +58,54 @@
   </div>
 </template>
 <script>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+
+// 1. 获取用户信息
+function useGetUserInfo() {
+  const userInfo = ref('')
+  const showUser = ref(true)
+  const getUserInfo = onMounted(() => {
+    userInfo.value = sessionStorage.getItem('userInfo')
+    if (!userInfo.value) {
+      userInfo.value = '未登录'
+    }
+    if (userInfo.value === '未登录') {
+      showUser.value = false
+    } else {
+      showUser.value = true
+    }
+  })
+  return { getUserInfo, userInfo, showUser }
+}
+
+// 2. 退出登录
+function useToLogout(router) {
+  const toLogout = () => {
+    // 清除缓存
+    sessionStorage.clear()
+    router.push({
+      path: '/login'
+    })
+  }
+  return toLogout
+}
+// 3. 到登录页面
+function useToLogin(router) {
+  const toLogin = () => {
+    router.push({
+      path: '/login'
+    })
+  }
+  return toLogin
+}
 export default {
   name: 'Home',
   setup() {
+    const { getUserInfo, userInfo, showUser } = useGetUserInfo()
+    const router = useRouter()
+    const toLogout = useToLogout(router)
+    const toLogin = useToLogin(router)
     const state = reactive({
       firstMenuList: [
         {
@@ -71,28 +115,12 @@ export default {
           classIconRight: 'bi bi-chevron-double-right',
           dIconRight: 'M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z'
         }
-      ]
+      ],
+      userInfo,
+      showUser
     })
-    const userInfo = ref('')
-    const getUserInfo = onMounted(() => {
-      userInfo.value = sessionStorage.getItem('userInfo')
-      if (!userInfo.value) {
-        userInfo.value = '未登录'
-      }
-    })
-    const router = useRouter()
-    const toLogout = () => {
-      router.push({
-        path: '/login'
-      })
-    }
-    const toLogin = () => {
-      router.push({
-        path: '/login'
-      })
-    }
     return {
-      state, toLogout, toLogin, userInfo, getUserInfo
+      ...toRefs(state), toLogout, toLogin, getUserInfo
     }
   }
 }
