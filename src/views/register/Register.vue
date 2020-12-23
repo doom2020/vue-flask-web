@@ -84,6 +84,7 @@ function useHandlerAccount() {
     } else {
       accountClass.value = 'form-control is-valid'
     }
+    console.log('account:', account.value)
   }
   return { handlerAccount, account, accountClass }
 }
@@ -97,12 +98,13 @@ function useHandlerPhone() {
     } else {
       phoneClass.value = 'form-control is-valid'
     }
+    console.log('phone:', phone.value)
   }
   return { handlerPhone, phone, phoneClass }
 }
 
 function useHandlerPwd() {
-  const pwd = ''
+  const pwd = ref('')
   const pwdClass = ref('form-control')
   const handlerPwd = () => {
     if (!pwd.value) {
@@ -110,12 +112,13 @@ function useHandlerPwd() {
     } else {
       pwdClass.value = 'form-control is-valid'
     }
+    console.log('pwd:', pwd.value)
   }
   return { handlerPwd, pwd, pwdClass }
 }
 
 function useHandlerUpwd(pwd) {
-  const upwd = ''
+  const upwd = ref('')
   const upwdClass = ref('form-control')
   const handlerUpwd = () => {
     if (!upwd.value || upwd.value !== pwd.value) {
@@ -123,6 +126,7 @@ function useHandlerUpwd(pwd) {
     } else {
       upwdClass.value = 'form-control is-valid'
     }
+    console.log('upwd:', upwd.value)
   }
   return { handlerUpwd, upwd, upwdClass }
 }
@@ -130,6 +134,7 @@ function useHandlerUpwd(pwd) {
 function useRegisterDisabled() {
   const isAgree = ref(false)
   const registerDisabled = computed(() => {
+    console.log(isAgree.value)
     return !isAgree.value
   })
   return { registerDisabled, isAgree }
@@ -146,6 +151,8 @@ function useToRegister(router, account, phone, pwd, upwd, isChecked) {
     } else {
       showErrMsg.value = true
     }
+    console.log(showErrMsg.value)
+    console.log(account.value, phone.value, pwd.value, upwd.value, isChecked.value)
   }
   return { toRegister, showErrMsg }
 }
@@ -160,23 +167,8 @@ export default {
     const router = useRouter()
     const { toRegister, showErrMsg } = useToRegister(router, account, phone, pwd, upwd, isChecked)
     const { registerDisabled, isAgree } = useRegisterDisabled()
-    const state = reactive({
-      account,
-      accountClass,
-      phone,
-      phoneClass,
-      pwd,
-      pwdClass,
-      upwd,
-      upwdClass,
-      isAgree,
-      registerDisabled,
-      isChecked,
-      showErrMsg
-    })
-    return {
-      ...toRefs(state), toRegister, registerDisabled, handlerAccount, handlerPhone, handlerPwd, handlerUpwd
-    }
+    const state = reactive({ account, accountClass, phone, phoneClass, pwd, pwdClass, upwd, upwdClass, isChecked, showErrMsg, registerDisabled, isAgree })
+    return { ...toRefs(state), handlerAccount, handlerPhone, handlerPwd, handlerUpwd, toRegister }
   }
 }
 </script>
