@@ -33,10 +33,11 @@
         </ul>
       </div>
     </nav>
-    <div style="width: 180px;flex:;position: fixed;top: 0;margin-top: 58px;overflow: auto;">
+    <side-bar :my-message="myMessage" :first-menu-list="firstMenuList" @tell="handlerSideBarMsg"></side-bar>
+    <!-- <div style="width: 180px;flex:;position: fixed;top: 0;margin-top: 58px;overflow: auto;">
       <ul style="margin-bottom: 0;padding-left: 0;background-color: dimgrey;">
         <li v-for="(item, index) in firstMenuList" :key="index" class="firstMenu">
-          <a>
+          <a href="#">
             <span>
               <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" :class="item.classIconLeft" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" :d="item.dIconLeft"/>
@@ -51,7 +52,7 @@
           </a>
         </li>
       </ul>
-    </div>
+    </div> -->
     <nav class="navbar navbar-expand-lg navbar-light" style="position: fixed;bottom: 0;width: 100%;background-color: #e3f2fd;">
       <a class="navbar-brand" href="#" style="float: right">Version: 1.0.0.1</a>
     </nav>
@@ -60,6 +61,7 @@
 <script>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+import SideBar from '../components/SideBar.vue'
 
 // 1. 获取用户信息
 function useGetUserInfo() {
@@ -100,12 +102,17 @@ function useToLogin(router) {
   return toLogin
 }
 export default {
+  components: { SideBar },
   name: 'Home',
   setup() {
     const { getUserInfo, userInfo, showUser } = useGetUserInfo()
     const router = useRouter()
     const toLogout = useToLogout(router)
     const toLogin = useToLogin(router)
+    const handlerSideBarMsg = (args) => {
+      console.log(args)
+      console.log('get message:', args.name, args.msg)
+    }
     const state = reactive({
       firstMenuList: [
         {
@@ -117,10 +124,11 @@ export default {
         }
       ],
       userInfo,
-      showUser
+      showUser,
+      myMessage: 'i is father components'
     })
     return {
-      ...toRefs(state), toLogout, toLogin, getUserInfo
+      ...toRefs(state), toLogout, toLogin, getUserInfo, handlerSideBarMsg
     }
   }
 }
