@@ -28,6 +28,12 @@ const routes = [
     name: 'Forget',
     meta: 'forget',
     component: () => import('../views/forget/Forget.vue')
+  },
+  {
+    path: '/nav',
+    name: 'nav',
+    meta: 'nav',
+    component: () => import('../components/HeadNavBar.vue')
   }
 ]
 

@@ -34,25 +34,7 @@
       </div>
     </nav>
     <side-bar :my-message="myMessage" :first-menu-list="firstMenuList" @tell="handlerSideBarMsg"></side-bar>
-    <!-- <div style="width: 180px;flex:;position: fixed;top: 0;margin-top: 58px;overflow: auto;">
-      <ul style="margin-bottom: 0;padding-left: 0;background-color: dimgrey;">
-        <li v-for="(item, index) in firstMenuList" :key="index" class="firstMenu">
-          <a href="#">
-            <span>
-              <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" :class="item.classIconLeft" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" :d="item.dIconLeft"/>
-              </svg>
-            </span>
-            <span style="margin-left: 10px;">{{ item.name }}</span>
-            <span style="float: right;margin-right: 2px;">
-              <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" :class="item.classIconRight" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" :d="item.dIconRight"/>
-              </svg>
-            </span>
-          </a>
-        </li>
-      </ul>
-    </div> -->
+    <div style="background-color: gray;height: 300px;margin-top: 58px;margin-left: 181px"></div>
     <nav class="navbar navbar-expand-lg navbar-light" style="position: fixed;bottom: 0;width: 100%;background-color: #e3f2fd;">
       <a class="navbar-brand" href="#" style="float: right">Version: 1.0.0.1</a>
     </nav>
@@ -143,6 +125,8 @@ export default {
     /* text-align: center; */
     background-color: dodgerblue;
     margin-bottom: 2px;
+    width: 180px;
+    float: left;
   }
   body{
     margin: 0;
