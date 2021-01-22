@@ -26,7 +26,4 @@ export default {
 }
 </script>
 <style scoped>
-.version {
-  float: right;
-}
 </style>
