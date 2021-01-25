@@ -4,7 +4,7 @@
 
 <script>
 export default {
-    name: 'Message',
+    name: 'MessageMng',
     emits: [],
     props: {},
     setup(props, { emit }) {
