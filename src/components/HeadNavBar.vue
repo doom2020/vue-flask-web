@@ -1,8 +1,8 @@
 <template>
   <div class="headNavBar">
     <div class="page_container">
-      <a class="item_img" href="#"><img src="../assets/logo.png" style="height: 48px;width: 48px;"></a>
-      <a class="item_home" href="#">Home</a>
+      <a class="item_img" href="#"><img src="../assets/logo.png" style="height: 48px;width: 48px;" @click="toHomePage"></a>
+      <a class="item_home" href="#" @click="toHomePage">Home</a>
       <input class="item_input" type="text" placeholder="Search。。">
       <button class="item_btn" type="button">Search</button>
       <span v-if="showUser" class="item_user">{{ userInfo }}</span>
@@ -53,6 +53,15 @@ function useToLogin(router) {
   }
   return toLogin
 }
+// 回到首页
+function useToHomePage(router) {
+  const toHomePage = () => {
+    router.push({
+      path: '/home'
+    })
+  }
+  return toHomePage
+}
 export default {
   name: 'HeadNavBar',
   props: {
@@ -63,12 +72,13 @@ export default {
     const router = useRouter()
     const toLogout = useToLogout(router)
     const toLogin = useToLogin(router)
+    const toHomePage = useToHomePage(router)
     const state = reactive({
       userInfo,
       showUser
     })
     return {
-      ...toRefs(state), toLogout, toLogin, getUserInfo
+      ...toRefs(state), toLogout, toLogin, getUserInfo, toHomePage
     }
   }
 }
