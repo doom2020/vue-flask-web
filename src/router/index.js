@@ -59,6 +59,31 @@ const routes = [
         component: () => import('../views/config/ServiceMng.vue')
       }
     ]
+  },
+  {
+    path: '/message',
+    component: () => import('../views/layout/Layout.vue'),
+    redirect: '',
+    children: [
+      {
+        path: 'proxyMsg',
+        name: 'ProxyMsg',
+        meta: 'proxyMsg',
+        component: () => import('../views/message/ProxyMsg.vue')
+      },
+      {
+        path: 'taskMsg',
+        name: 'TaskMsg',
+        meta: 'taskMsg',
+        component: () => import('../views/message/TaskMsg.vue')
+      },
+      {
+        path: 'serviceMsg',
+        name: 'ServiceMsg',
+        meta: 'serviceMsg',
+        component: () => import('../views/message/ServiceMsg.vue')
+      }
+    ]
   }
 ]
 

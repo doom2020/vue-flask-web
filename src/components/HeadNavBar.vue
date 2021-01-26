@@ -1,13 +1,13 @@
 <template>
   <div class="headNavBar">
     <div class="page_container">
-      <a class="item_img" href="#"><img src="../assets/logo.png" style="height: 48px;width: 48px;" @click="toHomePage"></a>
-      <a class="item_home" href="#" @click="toHomePage">Home</a>
+      <a class="item_img" href="#"><img src="../assets/logo.png" style="height: 48px;width: 48px;" @click.prevent="toHomePage"></a>
+      <a class="item_home" href="#" @click.prevent="toHomePage">Home</a>
       <input class="item_input" type="text" placeholder="Search。。">
       <button class="item_btn" type="button">Search</button>
       <span v-if="showUser" class="item_user">{{ userInfo }}</span>
-      <a v-else class="item_info" href="#" @click="toLogin">{{ userInfo}}</a>
-      <a class="item_logout" href="#" @click="toLogout">Logout</a>
+      <a v-else class="item_info" href="#" @click.prevent="toLogin">{{ userInfo}}</a>
+      <a class="item_logout" href="#" @click.prevent="toLogout">Logout</a>
     </div>
   </div>
 </template>
@@ -64,9 +64,7 @@ function useToHomePage(router) {
 }
 export default {
   name: 'HeadNavBar',
-  props: {
-    msg: String
-  },
+  props: {},
   setup(props) {
     const { getUserInfo, userInfo, showUser } = useGetUserInfo()
     const router = useRouter()

@@ -32,16 +32,16 @@ export default {
   name: 'FootNavBar',
   emits: ['listen-footer-bar'],
   props: {
+    // 从父组件接受参数
     myMessage: String
   },
   setup(props, { emit }) {
-    console.log('home send footer: ', props.myMessage)
     const state = reactive({
       showVersion: false
     })
     const sendMsgToHome = () => {
       state.showVersion = !state.showVersion
-      console.log('send message')
+      // 向父组件发送一个事件
       emit('listen-footer-bar', { name: 'footer', msg: 'hello' })
     }
     const closeModal = () => {
@@ -56,8 +56,8 @@ export default {
 <style scoped>
 .modal_style {
   position: fixed;
-  top: 200px;
-  left: 200px;
+  top: 100px;
+  left: 100px;
   display: block;
 }
 .detail_info {

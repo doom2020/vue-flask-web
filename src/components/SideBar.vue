@@ -3,7 +3,7 @@
     <div>
       <ul class="ul_style">
         <li v-for="(item, index) in firstMenuList" :key="index" class="firstMenu">
-          <a href="#" @click="sendMsgToHome(item, index)">
+          <a href="#" @click.prevent="sendMsgToHome(item, index)">
             <span>
               <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" :class="item.classIconLeft" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" :d="item.dIconLeft"/>
@@ -18,7 +18,7 @@
           </a>
           <ul class="child_ul" v-show="item.current">
             <li class="child_li" v-for="(item_c, index_c) in item.child" :key="index_c">
-              <a href="#" @click="toTargetPage(item_c.name)">{{ item_c.name }}</a>
+              <a href="#" @click.prevent="toTargetPage(item_c.name)">{{ item_c.name }}</a>
             </li>
           </ul>
         </li>
@@ -34,10 +34,10 @@ export default {
   name: 'SideBar',
   emits: ['listen-side-bar'],
   props: {
+    // 从父组件接受的参数
     myMessage: String
   },
   setup(props, { emit }) {
-    console.log('home send sideBar:', props.myMessage)
     const router = useRouter()
     const state = reactive({
       firstMenuList: [
@@ -89,15 +89,15 @@ export default {
         item.dIconRight = 'M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z'
         item.current = false
       }
-      console.log(state.firstMenuList)
       state.firstMenuList.forEach((item1, index1) => {
         if (!item1.current) {
           item1.dIconRight = 'M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z'
         }
       })
-      console.log('send message')
+      // 发送一个事件给父组件
       emit('listen-side-bar', { name: 'sideBar', msg: 'hello' })
     }
+    // 根据点击的菜单进行路由地址的切换
     const toTargetPage = (pageName) => {
       if (pageName === '代理配置') {
         router.push({
@@ -110,6 +110,18 @@ export default {
       } else if (pageName === '服务配置') {
         router.push({
           path: '/config/serviceMng'
+        })
+      } else if (pageName === '代理消息') {
+        router.push({
+          path: '/message/proxyMsg'
+        })
+      } else if (pageName === '任务消息') {
+        router.push({
+          path: '/message/taskMsg'
+        })
+      } else if (pageName === '服务消息') {
+        router.push({
+          path: '/message/serviceMsg'
         })
       }
     }

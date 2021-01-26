@@ -2,10 +2,10 @@
   <div id="forgetDiv">
     <ul class="nav nav-tabs" style="margin-left: 10px;padding-top: 10px;">
       <li class="nav-item">
-          <a class="nav-link" href="#" :style="state.findPwdStyle" @click="showFindPwdForm">找回密码</a>
+          <a class="nav-link" href="#" :style="state.findPwdStyle" @click.prevent="showFindPwdForm">找回密码</a>
       </li>
       <li class="nav-item">
-          <a class="nav-link" href="#" :style="state.resetPwdStyle" @click="showResetPwdForm">重置密码</a>
+          <a class="nav-link" href="#" :style="state.resetPwdStyle" @click.prevent="showResetPwdForm">重置密码</a>
       </li>
     </ul>
     <form id="findPwdForm" v-if="state.isFindPwd">
@@ -93,12 +93,6 @@ export default {
         account: '', phone: '', code: '', pwd: '', upwd: '', accountClass: 'form-control', phoneClass: 'form-control', codeClass: 'form-control', pwdClass: 'form-control', upwdClass: 'form-control'
       }
     })
-    // const findForm = reactive({
-    //   account: '', phone: '', code: '', accountClass: 'form-control', phoneClass: 'form-control', codeClass: 'form-control'
-    // })
-    // const resetForm = reactive({
-    //   account: '', phone: '', code: '', pwd: '', upwd: '', accountClass: 'form-control', phoneClass: 'form-control', codeClass: 'form-control', pwdClass: 'form-control', upwdClass: 'form-control'
-    // })
     console.log(state.findForm.account)
     const toGetCodeForFind = (state) => {
       if (!state.findForm.phone) {
@@ -115,7 +109,7 @@ export default {
         alert('验证码：1234')
       }
     }
-    
+
     const handlerAccountForFind = (state) => {
       if (!state.findForm.account) {
         state.findForm.accountClass = 'form-control is-invalid'

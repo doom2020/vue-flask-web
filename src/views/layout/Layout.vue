@@ -7,8 +7,9 @@
       <div class="side_bar">
         <side-bar :my-message="myMessage" @listen-side-bar="handlerSideBarMsg"></side-bar>
       </div>
+      <!-- 动态渲染组件 -->
       <div class="main">
-        <router-view v-if="routerAlive">
+        <router-view :key="cptKey">
           <keep-alive>
             <component :is="componentName" />
           </keep-alive>
@@ -21,7 +22,8 @@
   </div>
 </template>
 <script>
-import { onActivated, onBeforeMount, onMounted, reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
+import { useRoute } from 'vue-router'
 import SideBar from '../../components/SideBar.vue'
 import FootNavBar from '../../components/FootNavBar.vue'
 import HeadNavBar from '../../components/HeadNavBar.vue'
@@ -29,67 +31,49 @@ import Home from '../Home.vue'
 import ProxyMng from '../config/ProxyMng.vue'
 import TaskMng from '../config/TaskMng.vue'
 import ServiceMng from '../config/ServiceMng.vue'
-import { useRoute } from 'vue-router'
+import ProxyMsg from '../message/ProxyMsg.vue'
+import TaskMsg from '../message/TaskMsg.vue'
+import ServiceMsg from '../message/ServiceMsg.vue'
 
 export default {
-  components: { SideBar, FootNavBar, HeadNavBar, Home, ProxyMng, TaskMng, ServiceMng },
+  components: { SideBar, FootNavBar, HeadNavBar, Home, ProxyMng, TaskMng, ServiceMng, ProxyMsg, TaskMsg, ServiceMsg },
   name: 'Layout',
   setup() {
-    console.log('222222222222222222222')
-    onBeforeMount(() => {
-      console.log('aaaaaaaaaaaaa')
-    })
     // 处理SideBar子组件传递的事件
     const handlerSideBarMsg = (args) => {
-      console.log('sideBar args', args)
       console.log('get message from sideBar:', args.name, args.msg)
     }
     // 处理FooterNavBar子组件传递的事件
     const handlerFooterNavBarMsg = (args) => {
-      console.log('footer args: ', args)
       console.log('get message from footer: ', args.name, args.msg)
     }
     const state = reactive({
-      // 定义一个传递给子组件的props
+      // 定义一个变量传递给子组件的props
       myMessage: 'i is father components',
-      componentName: 'Home',
-      routerAlive: false
+      componentName: 'Home'
     })
     const route = useRoute()
-    onMounted(() => {
-      console.log('请求path: ', route.path)
+    // 根据路由变化动态加载相应的组件
+    const cptKey = computed(() => {
       if (route.path === '/home') {
         state.componentName = 'Home'
-        state.routerAlive = true
       } else if (route.path === '/config/proxyMng') {
         state.componentName = 'ProxyMng'
-        state.routerAlive = true
       } else if (route.path === '/config/taskMng') {
         state.componentName = 'TaskMng'
-        state.routerAlive = true
       } else if (route.path === '/config/serviceMng') {
         state.componentName = 'ServiceMng'
-        state.routerAlive = true
+      } else if (route.path === '/message/proxyMsg') {
+        state.componentName = 'ProxyMsg'
+      } else if (route.path === '/message/taskMsg') {
+        state.componentName = 'TaskMsg'
+      } else if (route.path === '/message/serviceMsg') {
+        state.componentName = 'ServiceMsg'
       }
-    })
-    onActivated(() => {
-      console.log('请求path: ', route.path)
-      if (route.path === '/home') {
-        state.componentName = 'Home'
-        state.routerAlive = true
-      } else if (route.path === '/config/proxyMng') {
-        state.componentName = 'ProxyMng'
-        state.routerAlive = true
-      } else if (route.path === '/config/taskMng') {
-        state.componentName = 'TaskMng'
-        state.routerAlive = true
-      } else if (route.path === '/config/serviceMng') {
-        state.componentName = 'ServiceMng'
-        state.routerAlive = true
-      }
+      return route.path + Math.random()
     })
     return {
-      ...toRefs(state), handlerSideBarMsg, handlerFooterNavBarMsg
+      ...toRefs(state), handlerSideBarMsg, handlerFooterNavBarMsg, cptKey
     }
   }
 }

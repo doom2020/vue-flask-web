@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-4 mb-3">
           <div class="form-group" style="float: right">
-            <a href="#" id="forgetPwd" @click="forgetPassword" @mouseover="toFindPassword" @mouseleave="cancleToFindPwd">Forget password?</a>
+            <a href="#" id="forgetPwd" @click.prevent="forgetPassword" @mouseover="toFindPassword" @mouseleave="cancleToFindPwd">Forget password?</a>
             <label class="form-check-label" for="forgetPwd">
             </label>
             <div v-show="showForMsg" class="fontStyle">跳转至找回密码</div>
@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-4 mb-3">
           <div class="form-group" style="float: right">
-            <a href="#" id="registerAccount" @click="registerAccount" @mouseover="toRegisterAccount" @mouseleave="cancleToRegister">Not account?</a>
+            <a href="#" id="registerAccount" @click.prevent="registerAccount" @mouseover="toRegisterAccount" @mouseleave="cancleToRegister">Not account?</a>
             <label class="form-check-label" for="registerAccount">
             </label>
             <div v-show="showRegMsg" class="fontStyle">去注册一个账户</div>
@@ -129,7 +129,7 @@ function useHandlerPassword() {
       passwordMsgClass.value = 'valid-feedback'
     }
   }
-  return { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass } 
+  return { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass }
 }
 
 // 6. 处理记住密码
