@@ -51,6 +51,7 @@
 <script>
 import { onMounted, reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+import { forLogin } from '../../api/login'
 
 // 1. 忘记密码
 function useForgetPassword(router) {
@@ -73,16 +74,23 @@ function useRegisterAccount(router) {
 }
 
 // 3. 登录
-function useToLogin(router, account) {
+function useToLogin(router, account, password) {
   const loginDisabled = ref(false)
   const showErrMsg = ref(false)
   const toLogin = () => {
     loginDisabled.value = true
-    if (!account.value) {
+    if (!account.value || !password.value) {
       showErrMsg.value = true
       loginDisabled.value = false
     } else {
       loginDisabled.value = false
+      const data = { account: account.value, password: password.value }
+      console.log(data)
+      forLogin(data).then(res => {
+        console.log(res)
+      }).catch(error => {
+        console.log(error)
+      })
       sessionStorage.setItem('userInfo', account.value)
       router.push({
         path: '/'
@@ -212,9 +220,10 @@ export default {
     const forgetPassword = useForgetPassword(router)
     const registerAccount = useRegisterAccount(router)
     const { handlerAccount, account, accountClass, accountMsg, accountMsgClass } = useHandlerAccount()
-    const { toLogin, loginDisabled, showErrMsg } = useToLogin(router, account)
-    const { focusAccount, accountInput } = useFocusAccount()
     const { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass } = useHandlerPassword()
+    const { toLogin, loginDisabled, showErrMsg } = useToLogin(router, account, password)
+    const { focusAccount, accountInput } = useFocusAccount()
+    // const { handlerPassword, password, passwordClass, passwordMsg, passwordMsgClass } = useHandlerPassword()
     const { handlerRember, remPwd, showRemMsg } = useHandlerRember()
     const showForMsg = ref(false)
     const toFindPassword = useToFindPassword(showForMsg)
