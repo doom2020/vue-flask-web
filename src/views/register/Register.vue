@@ -74,6 +74,7 @@
 <script>
 import { computed, reactive, toRefs, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { forRegister } from '../../api/register'
 
 function useHandlerAccount() {
   const account = ref('')
@@ -144,6 +145,12 @@ function useToRegister(router, account, phone, pwd, upwd, isChecked) {
   const showErrMsg = ref(false)
   const toRegister = () => {
     if (account.value && phone.value && pwd.value && upwd.value && isChecked) {
+      const data = { account: account.value, phone: phone.value, pwd: pwd.value, upwd: upwd.value }
+      forRegister(data).then(response => {
+        console.log(response)
+      }).catch(error => {
+        console.log(error)
+      })
       sessionStorage.setItem('userInfo', account.value)
       router.push({
         path: '/'
